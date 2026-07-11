@@ -1,0 +1,41 @@
+@model List<SaleListItemViewModel>
+@{
+    ViewData["Title"] = "Lịch Sử Bán Sách";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Lịch Sử Bán Sách</h2>
+        <p class="page-description">Tối đa 100 đơn bán gần nhất</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">+ Tạo Đơn Bán</a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="success-box">@TempData["SuccessMessage"]</div>
+}
+
+<table class="table">
+    <thead>
+        <tr><th>Mã đơn</th><th>Thời gian</th><th>Nhân viên</th><th>Số dòng</th><th>Tổng tiền</th><th></th></tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.SaleCode</td>
+                <td>@s.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@(s.CreatedByUserName ?? "—")</td>
+                <td>@s.ItemCount</td>
+                <td>@s.TotalAmount.ToString("N0") VNĐ</td>
+                <td><a class="btn" asp-action="Detail" asp-route-id="@s.Id">Chi tiết</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p class="page-description">Chưa có đơn bán nào.</p>
+}

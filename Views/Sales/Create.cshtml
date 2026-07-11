@@ -1,0 +1,54 @@
+@model SaleCreateViewModel
+@{
+    ViewData["Title"] = "Tạo Đơn Bán Sách";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Tạo Đơn Bán Sách</h2>
+        <p class="page-description">Nhập số lượng bán cho 1 hoặc nhiều sách. Giá &amp; tồn kho luôn được đọc lại từ server tại thời điểm xử lý — không tin dữ liệu client gửi lên.</p>
+    </div>
+    <a class="btn" asp-action="Index">← Lịch sử bán hàng</a>
+</div>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+    <table class="table">
+        <thead>
+            <tr><th>Mã sách</th><th>Tên sách</th><th>Giá</th><th>Tồn kho</th><th>Số lượng bán</th></tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Lines.Count; i++)
+            {
+                <tr class="sale-line-row">
+                    <td>
+                        @Model.Lines[i].BookCode
+                        <input type="hidden" asp-for="Lines[i].BookId" />
+                        <input type="hidden" asp-for="Lines[i].BookCode" />
+                        <input type="hidden" asp-for="Lines[i].Title" />
+                        <input type="hidden" asp-for="Lines[i].Price" />
+                        <input type="hidden" asp-for="Lines[i].AvailableQuantity" />
+                    </td>
+                    <td>@Model.Lines[i].Title</td>
+                    <td>@Model.Lines[i].Price.ToString("N0") VNĐ</td>
+                    <td>@Model.Lines[i].AvailableQuantity</td>
+                    <td>
+                        <input asp-for="Lines[i].QuantityToSell" class="qty-input" type="number" min="0" max="@Model.Lines[i].AvailableQuantity" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Lines.Any())
+    {
+        <div class="info-box">Hiện không có sách nào còn tồn kho để bán.</div>
+    }
+    else
+    {
+        <div class="card-actions" style="margin-top:18px">
+            <button type="submit" class="btn btn-primary">Tạo đơn bán</button>
+        </div>
+    }
+</form>
