@@ -1,0 +1,57 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Đăng Nhập";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Đăng Nhập</h2>
+        <p class="page-description">Hệ thống yêu cầu đăng nhập cho toàn bộ chức năng quản lý.</p>
+    </div>
+</div>
+
+<div class="form-layout">
+    <div class="form-box">
+        <form asp-action="Login" method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" autocomplete="username" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" autocomplete="current-password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input asp-for="RememberMe" style="width:auto" /> @Html.DisplayNameFor(m => m.RememberMe)
+                </label>
+            </div>
+
+            <div class="card-actions">
+                <button type="submit" class="btn btn-primary">Đăng nhập</button>
+                <a class="btn btn-light" asp-action="Register">Chưa có tài khoản? Đăng ký</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="info-box">
+        <strong>Tài khoản demo (seed sẵn):</strong>
+        <table class="table" style="margin-top:10px">
+            <thead><tr><th>Role</th><th>Email</th><th>Mật khẩu</th></tr></thead>
+            <tbody>
+                <tr><td>Admin</td><td>admin@bookstore.test</td><td>Admin@123</td></tr>
+                <tr><td>Staff</td><td>staff@bookstore.test</td><td>Staff@123</td></tr>
+                <tr><td>User</td><td>user@bookstore.test</td><td>User@123</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
