@@ -1,0 +1,78 @@
+﻿@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">@ViewData["AppName"]</h2>
+        <p class="page-description">Dashboard tổng quan — Identity, Role-based Authorization, Audit Log &amp; Secure Upload (Lab06)</p>
+    </div>
+</div>
+
+<div class="product-grid">
+    <div class="product-card">
+        <h3>@Model.TotalBooks</h3>
+        <p class="product-meta">Tổng số sách (gồm đã xóa mềm)</p>
+    </div>
+    <div class="product-card">
+        <h3>@Model.ActiveBooks</h3>
+        <p class="product-meta">Sách đang hoạt động (IsDeleted = false)</p>
+        <div class="card-actions"><a class="btn" asp-controller="Books" asp-action="Index">Xem</a></div>
+    </div>
+    <div class="product-card">
+        <h3>@Model.DeletedBooks</h3>
+        <p class="product-meta">Sách trong Thùng rác</p>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="card-actions"><a class="btn" asp-controller="Books" asp-action="Trash">Thùng rác</a></div>
+        }
+    </div>
+    <div class="product-card">
+        <h3>@Model.LowStockBooks</h3>
+        <p class="product-meta">Sách tồn kho thấp cần chú ý</p>
+    </div>
+    <div class="product-card">
+        <h3>@Model.CreatedTodayBooks</h3>
+        <p class="product-meta">Sách tạo mới hôm nay</p>
+    </div>
+    <div class="product-card">
+        <h3>@Model.LogsToday</h3>
+        <p class="product-meta">Số log thao tác trong ngày</p>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="card-actions"><a class="btn" asp-controller="AuditLogs" asp-action="Index">Audit Logs</a></div>
+        }
+    </div>
+</div>
+
+@if (Model.Security != null)
+{
+    <h3 style="margin-top:32px">Security Dashboard <span class="badge badge-muted">Chỉ Admin</span></h3>
+    <div class="security-grid">
+        <div class="stat-card">
+            <div class="stat-number">@Model.Security.AccessDeniedToday</div>
+            <div class="stat-label">Lượt bị từ chối truy cập (AccessDenied) hôm nay</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">@Model.Security.SensitiveActionsToday</div>
+            <div class="stat-label">Thao tác nhạy cảm hôm nay (Create/Edit/Delete/Restore/AdjustStock/Upload/Sale)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">@Model.Security.RejectedUploadsToday</div>
+            <div class="stat-label">Lượt upload ảnh bị từ chối hôm nay</div>
+        </div>
+    </div>
+    <div class="card-actions">
+        <a class="btn" asp-controller="AuditLogs" asp-action="Search">Tìm kiếm Audit Log</a>
+    </div>
+}
+
+<div class="info-box" style="margin-top:20px">
+    <strong>Quan sát nhanh:</strong>
+    <a href="/health/live" target="_blank">/health/live</a> ·
+    <a href="/health/ready" target="_blank">/health/ready</a> ·
+    <a href="/api/books/1" target="_blank">/api/books/1</a> ·
+    <a href="/api/books/9999" target="_blank">/api/books/9999 (ProblemDetails 404)</a> ·
+    <a href="/api/books/search?keyword=" target="_blank">/api/books/search?keyword= (ValidationProblemDetails 400)</a>
+</div>
