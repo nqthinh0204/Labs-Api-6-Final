@@ -1,0 +1,97 @@
+@model AuditLogSearchViewModel
+@{
+    ViewData["Title"] = "Tìm Kiếm Audit Log";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Tìm Kiếm Audit Log</h2>
+        <p class="page-description">Lọc theo user, action, kết quả và khoảng ngày — dùng LINQ + AsNoTracking (chỉ đọc)</p>
+    </div>
+    <a class="btn" asp-action="Index">← Danh sách gần đây</a>
+</div>
+
+<form asp-action="Search" method="get" class="filter-form">
+    <div class="form-group">
+        <label asp-for="UserName"></label>
+        <input asp-for="UserName" class="form-control" placeholder="vd: admin@bookstore.test" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Action"></label>
+        <select asp-for="Action" class="form-control">
+            <option value="">-- Tất cả --</option>
+            @foreach (var act in AuditLogSearchViewModel.KnownActions)
+            {
+                <option value="@act" selected="@(Model.Action == act)">@act</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="Result"></label>
+        <select asp-for="Result" class="form-control">
+            <option value="">-- Tất cả --</option>
+            @foreach (var r in AuditLogSearchViewModel.KnownResults)
+            {
+                <option value="@r" selected="@(Model.Result == r)">@r</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="FromDate"></label>
+        <input asp-for="FromDate" class="form-control" type="date" />
+    </div>
+    <div class="form-group">
+        <label asp-for="ToDate"></label>
+        <input asp-for="ToDate" class="form-control" type="date" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+    </div>
+</form>
+
+@if (Model.HasSearched)
+{
+    <table class="table">
+        <thead>
+            <tr><th>Thời gian</th><th>Level</th><th>Action</th><th>Entity</th><th>User</th><th>IP</th><th>Kết quả</th><th>Nội dung</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model.Results)
+            {
+                <tr>
+                    <td>@a.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                    <td>
+                        @if (a.Level == "Error")
+                        { <span class="badge badge-danger">@a.Level</span> }
+                        else if (a.Level == "Warning")
+                        { <span class="badge badge-warning">@a.Level</span> }
+                        else
+                        { <span class="badge badge-success">@a.Level</span> }
+                    </td>
+                    <td>@a.Action</td>
+                    <td>@a.Entity @(string.IsNullOrEmpty(a.EntityKey) ? "" : $"({a.EntityKey})")</td>
+                    <td>@(a.UserName ?? "—")</td>
+                    <td>@(a.IpAddress ?? "—")</td>
+                    <td>
+                        @if (a.Result == "Success")
+                        { <span class="badge badge-success">Success</span> }
+                        else if (a.Result == "Denied")
+                        { <span class="badge badge-danger">Denied</span> }
+                        else
+                        { <span class="badge badge-warning">Failed</span> }
+                    </td>
+                    <td>@a.Message</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Results.Any())
+    {
+        <div class="info-box">Không tìm thấy log nào khớp với điều kiện lọc đã chọn.</div>
+    }
+}
+else
+{
+    <div class="info-box">Nhập điều kiện lọc ở trên rồi bấm "Tìm kiếm" để xem kết quả.</div>
+}

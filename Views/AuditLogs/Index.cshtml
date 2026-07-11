@@ -1,0 +1,52 @@
+@model List<AuditLogListItemViewModel>
+@{
+    ViewData["Title"] = "Audit Logs";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Audit Logs</h2>
+        <p class="page-description">100 log gần nhất: Create / Edit / SoftDelete / Restore / AdjustStock / Login / AccessDenied ...</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Search">Tìm kiếm nâng cao</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr><th>Thời gian</th><th>Level</th><th>Action</th><th>Entity</th><th>User</th><th>IP</th><th>Kết quả</th><th>Nội dung</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var a in Model)
+        {
+            <tr>
+                <td>@a.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                <td>
+                    @if (a.Level == "Error")
+                    { <span class="badge badge-danger">@a.Level</span> }
+                    else if (a.Level == "Warning")
+                    { <span class="badge badge-warning">@a.Level</span> }
+                    else
+                    { <span class="badge badge-success">@a.Level</span> }
+                </td>
+                <td>@a.Action</td>
+                <td>@a.Entity @(string.IsNullOrEmpty(a.EntityKey) ? "" : $"({a.EntityKey})")</td>
+                <td>@(a.UserName ?? "—")</td>
+                <td>@(a.IpAddress ?? "—")</td>
+                <td>
+                    @if (a.Result == "Success")
+                    { <span class="badge badge-success">Success</span> }
+                    else if (a.Result == "Denied")
+                    { <span class="badge badge-danger">Denied</span> }
+                    else
+                    { <span class="badge badge-warning">Failed</span> }
+                </td>
+                <td>@a.Message</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p class="page-description">Chưa có log nào.</p>
+}
