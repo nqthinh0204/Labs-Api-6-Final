@@ -1,0 +1,21 @@
+## .NET
+bin/
+obj/
+*.user
+
+## Database (SQLite) - không commit dữ liệu, chỉ commit Migrations
+*.db
+*.db-shm
+*.db-wal
+
+## Logs (Serilog file sink)
+logs/
+
+## Ảnh upload của người dùng (không commit dữ liệu runtime, giữ lại thư mục qua .gitkeep)
+wwwroot/uploads/books/*
+!wwwroot/uploads/books/.gitkeep
+
+## IDE
+.vs/
+.vscode/
+*.swp

@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Đã xảy ra lỗi</h2>
+        <p class="page-description">Vui lòng thử lại hoặc liên hệ hỗ trợ.</p>
+    </div>
+</div>
+
+@if (ViewData["TraceId"] != null)
+{
+    <div class="info-box">Mã tra cứu (Trace Id): <code>@ViewData["TraceId"]</code> — vui lòng cung cấp mã này khi liên hệ hỗ trợ.</div>
+}
+
+<a class="btn" href="/">Về Dashboard</a>

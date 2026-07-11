@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Mini Bookstore</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-content">
+            <div class="brand">
+                <a asp-controller="Home" asp-action="Index">Mini Bookstore</a>
+            </div>
+            <nav class="main-nav">
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <a asp-controller="Home" asp-action="Index">Dashboard</a>
+                    <a asp-controller="Books" asp-action="Index">Sách</a>
+                    <a asp-controller="Books" asp-action="Search">Tìm Kiếm</a>
+                    <a asp-controller="Genres" asp-action="Index">Thể Loại</a>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+                    {
+                        <a asp-controller="Sales" asp-action="Create">Bán Sách</a>
+                        <a asp-controller="Sales" asp-action="Index">Lịch Sử Bán</a>
+                    }
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="AuditLogs" asp-action="Index">Audit Log</a>
+                    }
+                    <a href="/health/ready" target="_blank" rel="noopener">Health</a>
+                }
+            </nav>
+            <div class="user-menu">
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    var roleLabel = User.IsInRole("Admin") ? "Admin" : (User.IsInRole("Staff") ? "Staff" : "User");
+                    <span class="role-pill">@User.Identity.Name (@roleLabel)</span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-light">Đăng xuất</button>
+                    </form>
+                }
+                else
+                {
+                    <a class="btn btn-light" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                    <a class="btn" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                }
+            </div>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <span>&copy; 2026 - Mini Bookstore - Lab06 (Secure Mini Shop MVC)</span>
+        </div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
