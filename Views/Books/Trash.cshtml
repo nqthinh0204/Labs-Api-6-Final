@@ -1,0 +1,39 @@
+@model List<BookTrashItemViewModel>
+@{
+    ViewData["Title"] = "Thùng Rác";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Thùng Rác — Sách Đã Xóa Mềm</h2>
+        <p class="page-description">Dữ liệu lấy bằng IgnoreQueryFilters() + Where(IsDeleted) — có thể khôi phục</p>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr><th>Mã Sách</th><th>Tên Sách</th><th>Tác Giả</th><th>Đã xóa lúc</th><th>Hành động</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var b in Model)
+        {
+            <tr>
+                <td>@b.BookCode</td>
+                <td>@b.Title</td>
+                <td>@b.Author</td>
+                <td>@(b.DeletedAt?.ToString("dd/MM/yyyy HH:mm") ?? "—")</td>
+                <td>
+                    <form asp-action="Restore" asp-route-id="@b.Id" method="post" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-success">Khôi phục</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p class="page-description">Thùng rác trống.</p>
+}

@@ -1,0 +1,50 @@
+@model BookImageUploadViewModel
+@{
+    ViewData["Title"] = "Ảnh Bìa Sách";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Ảnh Bìa: @Model.Title</h2>
+        <p class="page-description">Mã sách: @Model.BookCode — chỉ chấp nhận .jpg, .jpeg, .png, .webp, tối đa 2MB</p>
+    </div>
+    <a class="btn" asp-action="Detail" asp-route-id="@Model.Id">← Chi tiết sách</a>
+</div>
+
+<div class="product-card" style="max-width:520px">
+    <div class="form-group">
+        <label>Ảnh hiện tại</label>
+        @if (!string.IsNullOrEmpty(Model.CurrentCoverImageUrl))
+        {
+            <img src="@Model.CurrentCoverImageUrl" alt="Ảnh bìa hiện tại" class="cover-preview" />
+        }
+        else
+        {
+            <p class="page-description">Sách này chưa có ảnh bìa.</p>
+        }
+    </div>
+
+    <form asp-action="UploadImage" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="BookCode" />
+        <input type="hidden" asp-for="Title" />
+
+        <div class="form-group">
+            <label asp-for="CoverImageFile"></label>
+            <input asp-for="CoverImageFile" class="form-control" type="file" accept=".jpg,.jpeg,.png,.webp" />
+            <span asp-validation-for="CoverImageFile" class="text-danger"></span>
+        </div>
+
+        <div class="card-actions" style="margin-top:16px">
+            <button type="submit" class="btn btn-primary">
+                @(string.IsNullOrEmpty(Model.CurrentCoverImageUrl) ? "Tải ảnh lên" : "Thay ảnh mới")
+            </button>
+            <a class="btn" asp-action="Detail" asp-route-id="@Model.Id">Hủy</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

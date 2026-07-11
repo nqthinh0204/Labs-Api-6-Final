@@ -1,0 +1,40 @@
+@model List<GenreListItemViewModel>
+@{
+    ViewData["Title"] = "Thể Loại Sách";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Thể Loại Sách</h2>
+        <p class="page-description">Quan hệ One-to-Many: một thể loại có nhiều cuốn sách — dùng AsNoTracking (chỉ đọc)</p>
+    </div>
+</div>
+
+@foreach (var genre in Model)
+{
+    <div class="product-card" style="margin-bottom:24px">
+        <h3>@genre.Name <span class="badge badge-success">@genre.BookCount cuốn</span></h3>
+        <table class="table" style="margin-top:12px">
+            <thead>
+                <tr><th>Mã Sách</th><th>Tên Sách</th><th>Tác Giả</th><th>Giá</th><th>Tồn</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var b in genre.Books)
+                {
+                    <tr>
+                        <td>@b.BookCode</td>
+                        <td>@b.Title</td>
+                        <td>@b.Author</td>
+                        <td>@b.Price.ToString("N0") VNĐ</td>
+                        <td>
+                            @if (b.IsLowStock)
+                            { <span class="badge badge-warning">@b.Quantity (thấp)</span> }
+                            else
+                            { <span class="badge badge-success">@b.Quantity</span> }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

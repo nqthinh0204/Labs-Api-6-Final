@@ -1,0 +1,43 @@
+@model BookAdjustStockViewModel
+@{
+    ViewData["Title"] = "Điều Chỉnh Tồn Kho";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Điều Chỉnh Tồn Kho</h2>
+        <p class="page-description">Feature 2 — chỉ nhận lượng thay đổi + RowVersion, có kiểm tra concurrency và không cho tồn kho < 0</p>
+    </div>
+</div>
+
+<div class="product-card" style="max-width:520px">
+    <table class="table">
+        <tr><th>Mã sách</th><td>@Model.BookCode</td></tr>
+        <tr><th>Tên sách</th><td>@Model.Title</td></tr>
+        <tr><th>Tồn kho hiện tại</th><td>@Model.CurrentQuantity</td></tr>
+    </table>
+
+    <form asp-action="AdjustStock" asp-route-id="@Model.Id" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="BookCode" />
+        <input type="hidden" asp-for="Title" />
+        <input type="hidden" asp-for="CurrentQuantity" />
+        <input type="hidden" asp-for="RowVersion" />
+
+        <div class="form-group">
+            <label asp-for="Delta"></label>
+            <input asp-for="Delta" class="form-control" placeholder="VD: 10 để nhập thêm, -3 để xuất" />
+            <span asp-validation-for="Delta" class="text-danger"></span>
+        </div>
+
+        <div class="card-actions" style="margin-top:16px">
+            <button type="submit" class="btn btn-primary">Áp dụng</button>
+            <a class="btn" asp-action="Index">Hủy</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

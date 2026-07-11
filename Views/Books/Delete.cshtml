@@ -1,0 +1,27 @@
+@model BookDetailViewModel
+@{
+    ViewData["Title"] = "Xác Nhận Xóa";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Xác Nhận Xóa Mềm</h2>
+        <p class="page-description">Sách sẽ được chuyển vào Thùng rác (soft delete), không bị xóa khỏi database</p>
+    </div>
+</div>
+
+<div class="product-card" style="max-width:560px">
+    <p>Bạn có chắc muốn xóa sách sau?</p>
+    <table class="table">
+        <tr><th>Mã sách</th><td>@Model.BookCode</td></tr>
+        <tr><th>Tên sách</th><td>@Model.Title</td></tr>
+        <tr><th>Tác giả</th><td>@Model.Author</td></tr>
+    </table>
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+        @Html.AntiForgeryToken()
+        <div class="card-actions">
+            <button type="submit" class="btn btn-danger">Xóa mềm</button>
+            <a class="btn" asp-action="Index">Hủy</a>
+        </div>
+    </form>
+</div>

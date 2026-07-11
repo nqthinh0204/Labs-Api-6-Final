@@ -1,0 +1,73 @@
+@model List<BookListItemViewModel>
+@{
+    ViewData["Title"] = "Danh Sách Sách";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Danh Sách Sách</h2>
+        <p class="page-description">Chỉ hiển thị sách đang hoạt động (IsDeleted = false) — AsNoTracking</p>
+    </div>
+    @if (User.IsInRole("Admin"))
+    {
+        <a class="btn btn-primary" asp-action="Create">+ Thêm Sách</a>
+    }
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ảnh</th><th>Mã Sách</th><th>Tên Sách</th><th>Tác Giả</th><th>Giá</th><th>Tồn</th><th>Thể Loại</th><th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var b in Model)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(b.CoverImageUrl))
+                    {
+                        <img src="@b.CoverImageUrl" alt="Ảnh bìa @b.Title" class="cover-thumb" />
+                    }
+                    else
+                    {
+                        <span class="cover-thumb-placeholder">Chưa có ảnh</span>
+                    }
+                </td>
+                <td>@b.BookCode</td>
+                <td>@b.Title</td>
+                <td>@b.Author</td>
+                <td>@b.Price.ToString("N0") VNĐ</td>
+                <td>
+                    @if (b.Quantity == 0)
+                    { <span class="badge badge-danger">Hết hàng</span> }
+                    else if (b.IsLowStock)
+                    { <span class="badge badge-warning">@b.Quantity (thấp)</span> }
+                    else
+                    { <span class="badge badge-success">@b.Quantity</span> }
+                </td>
+                <td>@b.GenreName</td>
+                <td>
+                    <a class="btn" asp-action="Detail" asp-route-id="@b.Id">Chi tiết</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a class="btn" asp-action="Edit" asp-route-id="@b.Id">Sửa</a>
+                    }
+                    @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+                    {
+                        <a class="btn" asp-action="AdjustStock" asp-route-id="@b.Id">Tồn kho</a>
+                    }
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a class="btn btn-danger" asp-action="Delete" asp-route-id="@b.Id">Xóa</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p class="page-description">Chưa có sách nào đang hoạt động.</p>
+}

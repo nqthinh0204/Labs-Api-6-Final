@@ -1,0 +1,66 @@
+@model BookSearchViewModel
+@{
+    ViewData["Title"] = "Tìm Kiếm Sách";
+}
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Tìm Kiếm & Lọc Sách</h2>
+        <p class="page-description">Feature 1 — tìm theo từ khóa + lọc theo tình trạng tồn kho (chỉ dữ liệu đang hoạt động)</p>
+    </div>
+</div>
+
+<div class="product-card" style="margin-bottom:20px">
+    <form asp-action="Search" method="get" class="form-inline">
+        <div class="form-group">
+            <label for="keyword">Từ khóa</label>
+            <input id="keyword" name="keyword" value="@Model.Keyword" class="form-control" placeholder="Tên / tác giả / mã sách" />
+        </div>
+        <div class="form-group">
+            <label for="stockStatus">Tồn kho</label>
+            <select id="stockStatus" name="stockStatus" class="form-control">
+                <option value="all" selected="@(Model.StockStatus == "all" || string.IsNullOrEmpty(Model.StockStatus))">Tất cả</option>
+                <option value="in" selected="@(Model.StockStatus == "in")">Còn nhiều</option>
+                <option value="low" selected="@(Model.StockStatus == "low")">Tồn thấp</option>
+                <option value="out" selected="@(Model.StockStatus == "out")">Hết hàng</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Tìm</button>
+    </form>
+</div>
+
+@if (Model.HasSearched)
+{
+    @if (Model.Results.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr><th>Mã Sách</th><th>Tên Sách</th><th>Tác Giả</th><th>Giá</th><th>Tồn</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var b in Model.Results)
+                {
+                    <tr>
+                        <td>@b.BookCode</td>
+                        <td>@b.Title</td>
+                        <td>@b.Author</td>
+                        <td>@b.Price.ToString("N0") VNĐ</td>
+                        <td>
+                            @if (b.Quantity == 0)
+                            { <span class="badge badge-danger">Hết</span> }
+                            else if (b.IsLowStock)
+                            { <span class="badge badge-warning">@b.Quantity</span> }
+                            else
+                            { <span class="badge badge-success">@b.Quantity</span> }
+                        </td>
+                        <td><a class="btn" asp-action="Detail" asp-route-id="@b.Id">Chi tiết</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="info-box">Không tìm thấy sách phù hợp với điều kiện tìm kiếm.</div>
+    }
+}
